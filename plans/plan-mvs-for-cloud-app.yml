@@ -1,0 +1,15 @@
+name: Minimum Viable Security plan for Cloud Application
+level: beginner
+author: Jit
+version: 0.1
+owners:
+  default: null
+references:
+  - https://www.jit.io
+tags:
+  - mvs
+  - cloud_app
+items:
+  - name: Check for infrastructure misconfiguration
+    uses: >-
+      jitsecurity-controls/jit-plans/items/infrastructure/item-iac-misconfiguration-detection.yml@latest

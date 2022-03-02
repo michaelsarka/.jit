@@ -19,3 +19,31 @@ jobs:
         security_control_args: scan -p /code -o /code/jit-report -f json  --exclude-severities INFO,MEDIUM,LOW
         security_control_output_file: /code/jit-report/results.json
         dispatch_type: workflow
+
+  Scan-code-for-vulnerabilities:
+    if: contains( fromJSON(github.event.inputs.client_payload).payload.control_ids, 'a743023f-4803-4b2f-a4a6-b6daa11041a2')
+    runs-on: ubuntu-latest
+    steps:
+    - name: python-code-scanning
+      uses: jitsecurity-controls/jit-github-action@v1.5
+      with:
+        docker_user: jit-bot
+        docker_password: Z2hwX1JrdUpqZk5QTk5XWmpzVDRZb0J0Z3ZCNnBJOGtNMDNBbDlzMAo=
+        security_control: ghcr.io/jitsecurity-controls/control-bandit-slim:latest
+        security_control_args: -r /code -f json -q -ll -iii
+        security_control_output_file: /tmp/report.json
+        dispatch_type: workflow
+
+  Scan-code-for-hard-coded-secrets:
+    if: contains( fromJSON(github.event.inputs.client_payload).payload.control_ids, '13d7949c-3792-4145-86d2-239f0ddc6b1b')
+    runs-on: ubuntu-latest
+    steps:
+    - name: secrets-detection
+      uses: jitsecurity-controls/jit-github-action@v1.5
+      with:
+        docker_user: jit-bot
+        docker_password: Z2hwX1JrdUpqZk5QTk5XWmpzVDRZb0J0Z3ZCNnBJOGtNMDNBbDlzMAo=
+        security_control: ghcr.io/jitsecurity-controls/control-gitleaks-alpine:latest
+        security_control_args: detect --config /config/gitleaks.toml --source /code -v  --report-format json --report-path /tmp/report.json --redact --log-opts "-1"
+        security_control_output_file: /tmp/report.json
+        dispatch_type: workflow
